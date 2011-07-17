@@ -12,15 +12,15 @@
  #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
  #endif
 
- Servo myservo;// create servo object
+ Servo myservo; // create servo object
 
 const int  buttonPin = 9;    // the pin that the switch is attached to
 const int ledPin = 13;       // the pin that the LED is attached to
-const int servoPin = 4;
+const int servoPin = 4;      // the pin the servo is attached to
 
 int pos = 0;    // variable to store the servo position 
 int angerLevel = 0;
-int peaceLevel = 0; //everytime the buffer overflows on this variable, angerLevel will decrease by one. 
+int peaceLevel = 0; //everytime the buffer overflows, angerLevel will decrease by one. 
 
 // Variables will change:
 int buttonPushCounter = 0;   // counter for the number of button presses
@@ -28,6 +28,10 @@ int buttonState = 0;         // current state of the button
 int lastButtonState = 0;     // previous state of the button
 
 volatile boolean f_wdt=1;
+
+
+
+boolean debugSerial = false; //Change to true for serial debuging output
 
 
 
@@ -40,7 +44,10 @@ void setup() {
   // initialize the LED as an output:
   pinMode(ledPin, OUTPUT);
   // initialize serial communication:
-  Serial.begin(9600);
+  
+  if (debugSerial == true){
+     Serial.begin(9600);   
+  }
   
     // CPU Sleep Modes 
   // SM2 SM1 SM0 Sleep Mode
@@ -89,7 +96,11 @@ void loop() {
       if (peaceLevel >= 25 && angerLevel > 0 ) {
       angerLevel--;
       peaceLevel = 0; } //machine gradually calms down over time. Every 25 watch dog cycles (1/4 second), drops anger level. 
-      Serial.println(peaceLevel);
+      
+        if (debugSerial == true){
+            Serial.println(peaceLevel);  
+        }
+      
     }
       pinMode(ledPin, INPUT);//set as input to save power
 
