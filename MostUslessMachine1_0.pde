@@ -13,20 +13,20 @@
 
  Servo myservo; // create servo object
 
-const int  buttonPin = 9;    // the pin that the switch is attached to
-const int ledPin = 13;       // the pin that the LED is attached to
-const int servoPin = 4;      // the pin the servo is attached to
+	const int  buttonPin = 9;    // the pin that the switch is attached to
+	const int ledPin = 13;       // the pin that the LED is attached to
+	const int servoPin = 4;      // the pin the servo is attached to
 
-int pos = 0;    // variable to store the servo position 
-int angerLevel = 0;
-int peaceLevel = 0; //everytime the buffer overflows, angerLevel will decrease by one. 
+	int pos = 0;    // variable to store the servo position 
+	int angerLevel = 0;
+	int peaceLevel = 0; //everytime the buffer overflows, angerLevel will decrease by one. 
 
-// Variables will change:
-int buttonPushCounter = 0;   // counter for the number of button presses
-int buttonState = 0;         // current state of the button
-int lastButtonState = 0;     // previous state of the button
+	// Variables will change:
+	int buttonPushCounter = 0;   // counter for the number of button presses
+	int buttonState = 0;         // current state of the button
+	int lastButtonState = 0;     // previous state of the button
 
-volatile boolean f_wdt=1;
+	volatile boolean f_wdt=1;
 
 
 
@@ -34,10 +34,10 @@ volatile boolean f_wdt=1;
 //********* you may need to change these values depending on your construction********
 
 
-boolean debugSerial = false; //Change to true for serial debuging output
+	boolean debugSerial = false; //Change to true for serial debuging output
 
-int servoClosedValue = 179; // closed is 179 degrees
-int servoOpenValue = 0; // open is 0 degrees
+	int servoClosedValue = 179; // closed is 179 degrees
+	int servoOpenValue = 0; // open is 0 degrees
 
 
 //***************************************************************************************
@@ -45,36 +45,39 @@ int servoOpenValue = 0; // open is 0 degrees
 
 
 
-void setup() {
-  myservo.attach(servoPin);
-  myservo.write(179);
-  // initialize the button pin as a input:
-  pinMode(buttonPin, INPUT);
-  // initialize the LED as an output:
-  pinMode(ledPin, OUTPUT);
-  // initialize serial communication:
+void setup() 
+{
+  	myservo.attach(servoPin);
+ 	myservo.write(179);
+  	// initialize the button pin as a input:
+  	pinMode(buttonPin, INPUT);
+  	// initialize the LED as an output:
+  	pinMode(ledPin, OUTPUT);
+  	// initialize serial communication:
   
-  if (debugSerial == true){
-     Serial.begin(9600);   
-  }
+  if (debugSerial == true)
+  	{
+     	Serial.begin(9600);   
+  	}
   
-    // CPU Sleep Modes 
-  // SM2 SM1 SM0 Sleep Mode
-  // 0    0  0 Idle
-  // 0    0  1 ADC Noise Reduction
-  // 0    1  0 Power-down
-  // 0    1  1 Power-save
-  // 1    0  0 Reserved
-  // 1    0  1 Reserved
-  // 1    1  0 Standby(1)
+    	// CPU Sleep Modes 
+  		// SM2 SM1 SM0 Sleep Mode
+  		// 0    0  0 Idle
+  		// 0    0  1 ADC Noise Reduction
+ 	 	// 0    1  0 Power-down
+ 	 	// 0    1  1 Power-save
+ 		// 1    0  0 Reserved
+  		// 1    0  1 Reserved
+  		// 1    1  0 Standby(1)
 
-  cbi( SMCR,SE );      // sleep enable, power down mode
-  cbi( SMCR,SM0 );     // power down mode
-  sbi( SMCR,SM1 );     // power down mode
-  cbi( SMCR,SM2 );     // power down mode
+  	cbi( SMCR,SE );      // sleep enable, power down mode
+  	cbi( SMCR,SM0 );     // power down mode
+  	sbi( SMCR,SM1 );     // power down mode
+  	cbi( SMCR,SM2 );     // power down mode
 
-  setup_watchdog(5);
-}
+  	setup_watchdog(5);
+  	
+} //end Setup
 
 
 byte state = 0;
@@ -84,43 +87,49 @@ byte state = 0;
 
 void loop() {
   
-    if (f_wdt==1) {  // wait for timed out watchdog / flag is set when a watchdog timeout occurs
-    f_wdt=0;       // reset flag 
+if (f_wdt==1) 
+    {  // wait for timed out watchdog / flag is set when a watchdog timeout occurs
+    		f_wdt=0;       // reset flag 
   
-      // read the pushbutton input pin:
-      buttonState = digitalRead(buttonPin);
+      	// read the pushbutton input pin:
+      		buttonState = digitalRead(buttonPin);
   
-      peaceLevel=peaceLevel+1;
+      		peaceLevel=peaceLevel+1;
   
       // if the state has changed, increment the counter
-      if (buttonState == HIGH) {
-       state=1; 
-       angerLevel++;
-       digitalWrite(ledPin, HIGH);
-       delay((1000/angerLevel)+200); //doesnt perform exactly as expected. order of operations problem?
-         myservo.write(servoOpenValue);
-       delay((400/angerLevel)+350);
-       digitalWrite(ledPin, LOW);
-         myservo.write(servoClosedValue);
-       delay(250); //prevents loop from starting over before switch is fully off. 
-       } 
+    if (buttonState == HIGH) 
+      	{
+       		state=1; 
+       		angerLevel++;
+       		
+       		digitalWrite(ledPin, HIGH);
+       			delay((1000/angerLevel)+200); //doesnt perform exactly as expected. order of operations problem?
+       	  	myservo.write(servoOpenValue);
+    			delay((400/angerLevel)+350);
+       		digitalWrite(ledPin, LOW);
+       		myservo.write(servoClosedValue);
+       			delay(250); //prevents loop from starting over before switch is fully off. 
+       	} 
     
-      if (peaceLevel >= 25 && angerLevel > 0 ) {
-      angerLevel--;
-      peaceLevel = 0; } //machine gradually calms down over time. Every 25 watch dog cycles (1/4 second), drops anger level. 
+    if (peaceLevel >= 25 && angerLevel > 0 ) 
+      	{
+      		angerLevel--;
+      		peaceLevel = 0; 
+      	} //machine gradually calms down over time. Every 25 watch dog cycles (1/4 second), drops anger level. 
       
-        if (debugSerial == true){
+    if (debugSerial == true)
+    	{
             Serial.println(peaceLevel);  
-        }
+    	}
       
     }
-      pinMode(ledPin, INPUT);//set as input to save power
 
-   system_sleep();
-   pinMode(ledPin, OUTPUT);//return ledPin to former state
+	pinMode(ledPin, INPUT);//set as input to save power
+   	system_sleep();
+   	pinMode(ledPin, OUTPUT);//return ledPin to former state
   
    
-}//end Loop
+} //end Loop
 
 
 
@@ -136,7 +145,7 @@ void loop() {
 
 
 
-//****************************************************************  
+// ****************************************************************  
 // set system into the sleep state 
 // system wakes up when wtchdog is timed out
 void system_sleep() {
