@@ -1,5 +1,4 @@
 
-
  
  #include <Servo.h> // Library import
  #include <avr/sleep.h>
@@ -31,7 +30,17 @@ volatile boolean f_wdt=1;
 
 
 
+
+//********* you may need to change these values depending on your construction********
+
+
 boolean debugSerial = false; //Change to true for serial debuging output
+
+int servoClosedValue = 179; // closed is 179 degrees
+int servoOpenValue = 0; // open is 0 degrees
+
+
+//***************************************************************************************
 
 
 
@@ -70,6 +79,9 @@ void setup() {
 
 byte state = 0;
 
+
+
+
 void loop() {
   
     if (f_wdt==1) {  // wait for timed out watchdog / flag is set when a watchdog timeout occurs
@@ -86,10 +98,10 @@ void loop() {
        angerLevel++;
        digitalWrite(ledPin, HIGH);
        delay((1000/angerLevel)+200); //doesnt perform exactly as expected. order of operations problem?
-         myservo.write(0);
+         myservo.write(servoOpenValue);
        delay((400/angerLevel)+350);
        digitalWrite(ledPin, LOW);
-         myservo.write(179);
+         myservo.write(servoClosedValue);
        delay(250); //prevents loop from starting over before switch is fully off. 
        } 
     
